@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topics | CodeHub</title>
+<style>
+  :root { --green: #0f9d58; --dark: #0b7a43; --ink: #1f2328; --muted: #57606a; --line: #e6e8eb; --soft: #f7f9fa; --cream: #f7f9fa; --green-glow: rgba(15, 157, 88, 0.12); --shadow-lg: 0 12px 32px rgba(27, 31, 36, 0.12); }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  body { color: var(--ink); background: #fff; font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
+  a { color: inherit; text-decoration: none; }
+  .topbar { padding: 8px 5%; border-bottom: 1px solid var(--line); background: #fafbfc; color: #6e7781; text-align: right; font-size: 12px; }
+  .topbar a { margin-left: 20px; }
+  .site-header { position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.92); backdrop-filter: saturate(180%) blur(10px); }
+  .header-main { max-width: 1240px; margin: auto; padding: 14px 28px; display: flex; align-items: center; gap: 22px; }
+  .menu-button { display: none; border: 0; background: transparent; color: var(--ink); font-size: 22px; padding: 4px 8px; border-radius: 6px; }
+  .menu-button:hover { background: var(--cream); }
+  .logo { color: var(--ink); font-size: 22px; font-weight: 800; letter-spacing: -.6px; white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; }
+  .logo::before { content: 'C'; display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(135deg, var(--green), var(--dark)); color: #fff; font-size: 16px; }
+  .logo span { color: var(--green); }
+  .search { flex: 1; max-width: 500px; position: relative; }
+  .search input { width: 100%; border: 1px solid #d0d7de; border-radius: 10px; padding: 11px 48px 11px 40px; font-size: 14px; background: #f6f8fa; }
+  .search::before { content: '⌕'; position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #6e7781; font-size: 18px; pointer-events: none; }
+  .search button { position: absolute; right: 5px; top: 5px; height: calc(100% - 10px); width: 34px; border: 0; background: var(--green); color: #fff; border-radius: 8px; font-size: 16px; }
+  .main-nav { display: flex; align-items: center; gap: 22px; margin-left: auto; font-size: 14px; }
+  .main-nav a { color: var(--ink); font-weight: 600; }
+  .sign-in { background: #fff; color: var(--green); border: 1.5px solid var(--green); border-radius: 8px; padding: 9px 20px; font-weight: 700; }
+  .topic-nav { border-top: 1px solid #f1f2f3; background: #fff; overflow-x: auto; scrollbar-width: none; }
+  .topic-nav::-webkit-scrollbar { display: none; }
+  .topic-nav ul { max-width: 1240px; margin: auto; padding: 0 28px; display: flex; gap: 26px; list-style: none; font-size: 13.5px; color: var(--muted); white-space: nowrap; }
+  .topic-nav li { padding: 13px 0; position: relative; }
+  .topic-nav li.active { color: var(--green); font-weight: 700; }
+  .topic-nav li.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--green); border-radius: 3px 3px 0 0; }
+  .hero { background: linear-gradient(135deg, #f0faf3, #e4f5e9); border-bottom: 1px solid #d9eddd; padding: 58px 26px; }
+  .hero-inner { max-width: 1180px; margin: auto; }
+  .eyebrow { color: var(--green); font-size: 12px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; }
+  h1 { max-width: 680px; margin: 12px 0; font-size: clamp(32px, 5vw, 52px); line-height: 1.08; letter-spacing: -1.5px; }
+  .hero p { max-width: 640px; color: var(--muted); font-size: 17px; }
+  .directory { max-width: 1180px; margin: auto; padding: 42px 26px 70px; }
+  .section-title { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid var(--line); margin-bottom: 22px; padding-bottom: 12px; }
+  h2 { font-size: 24px; }
+  .section-title span { color: var(--green); font-size: 13px; font-weight: 700; }
+  .topic-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .topic-card { min-height: 185px; padding: 22px; border: 1px solid var(--line); border-radius: 10px; background: #fff; transition: transform .2s, box-shadow .2s, border-color .2s; }
+  .topic-card:hover { border-color: #bfe2c8; box-shadow: 0 10px 28px rgba(27,31,36,.1); transform: translateY(-3px); }
+  .topic-card:target { border-color: var(--green); box-shadow: 0 0 0 4px rgba(15,157,88,.1); }
+  .icon { display: inline-grid; place-items: center; width: 36px; height: 36px; margin-bottom: 16px; border-radius: 9px; background: #e6f4ea; color: var(--dark); font-weight: 800; }
+  h3 { margin-bottom: 7px; font-size: 18px; }
+  .topic-card p { color: var(--muted); font-size: 13px; }
+  .topic-card small { display: block; margin-top: 16px; color: var(--green); font-weight: 700; }
+  .resources { margin-top: 46px; padding-top: 28px; border-top: 1px solid var(--line); }
+  .resource-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
+  .resource { display: block; padding: 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); }
+  .resource strong { display: block; margin-bottom: 5px; color: var(--green); }
+  .resource span { color: var(--muted); font-size: 13px; }
+  footer { background: #14251a; color: #c5d0c9; padding: 52px 5% 24px; font-size: 13.5px; }
+  .footer-grid { max-width: 1184px; margin: auto; display: grid; grid-template-columns: 1.5fr repeat(3, 1fr); gap: 40px; }
+  footer h3 { color: #fff; font-size: 15px; font-weight: 700; margin-bottom: 16px; letter-spacing: .2px; }
+  footer p { color: #9aa89e; line-height: 1.65; max-width: 300px; }
+  footer ul { list-style: none; line-height: 2.1; color: #9aa89e; }
+  footer li { transition: color .22s; cursor: pointer; }
+  footer li:hover { color: #fff; }
+  .copyright { border-top: 1px solid #2a3d2f; max-width: 1184px; margin: 40px auto 0; padding-top: 20px; color: #8a9a90; font-size: 13px; text-align: center; }
+  @media (max-width: 900px) { .header-main { flex-wrap: wrap; padding: 13px 18px; gap: 14px; } .menu-button { display: block; } .search { order: 3; flex-basis: 100%; max-width: none; } .main-nav { gap: 12px; } .main-nav a { display: none; } .main-nav.mobile-open { position: absolute; top: 62px; right: 18px; display: flex; flex-direction: column; align-items: stretch; min-width: 180px; padding: 14px; background: #fff; border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow-lg); } .main-nav.mobile-open a { display: block; padding: 8px 4px; } .main-nav.mobile-open .sign-in { margin-top: 5px; } .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 28px; } }
+  @media (max-width: 760px) { .topic-grid { grid-template-columns: repeat(2, 1fr); } .resource-grid { grid-template-columns: 1fr; } .hero { padding: 42px 18px; } .directory { padding: 32px 18px 50px; } }
+  @media (max-width: 500px) { .topic-grid { grid-template-columns: 1fr; } .topbar { display: none; } .footer-grid { grid-template-columns: 1fr; } }
+.search { display: flex; align-items: center; gap: 6px; }
+.search input { flex: 1; min-width: 0; height: 38px; padding-top: 0; padding-bottom: 0; }
+.search button { position: static; flex: 0 0 34px; height: 38px; }
+.search-status { position: absolute; top: calc(100% + 4px); left: 0; width: 100%; margin: 0; z-index: 2; }
+</style>
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="topbar"><a href="#">Advertise with us</a><a href="#">Corporate Training</a><a href="#">Sign in</a></div>
+<header class="site-header">
+  <div class="header-main">
+    <button class="menu-button" aria-label="Menu" aria-expanded="false">☰</button>
+    <a class="logo" href="index.html">Code<span>Hub</span></a>
+    <div class="search"><input type="search" placeholder="Search tutorials, courses, and problems"><button aria-label="Search">⌕</button><div class="search-status" role="status"></div></div>
+    <nav class="main-nav"><a href="courses.html">Courses</a><a href="topics.html">Tutorials</a><a href="practice.html">Practice</a><a class="sign-in" href="signup.html">Sign Up</a></nav>
+  </div>
+  <nav class="topic-nav"><ul><li class="active"><a href="topics.html#dsa">DSA</a></li><li><a href="practice.html">Practice Problems</a></li><li><a href="topics.html#languages">C</a></li><li><a href="topics.html#languages">C++</a></li><li><a href="topics.html#languages">Java</a></li><li><a href="topics.html#languages">Python</a></li><li><a href="topics.html#web-development">JavaScript</a></li><li><a href="topics.html#ai-ml">Data Science</a></li><li><a href="topics.html#ai-ml">Machine Learning</a></li><li><a href="courses.html">Courses</a></li></ul></nav>
+</header>
+<section class="hero"><div class="hero-inner"><div class="eyebrow">The CodeHub learning directory</div><h1>Choose a path and keep building.</h1><p>Go deeper with focused learning paths for foundations, modern development, interviews, and the tools used by real engineering teams.</p></div></section>
+<main class="directory">
+  <div class="section-title"><h2>All learning topics</h2><span>12 paths to explore</span></div>
+  <div class="topic-grid">
+    <a class="topic-card" id="dsa" data-topic="dsa algorithms data structures" href="lesson.html?topic=dsa"><span class="icon">DS</span><h3>Data Structures & Algorithms</h3><p>Build the problem-solving patterns that power technical interviews and strong software.</p><small>Start path →</small></a>
+    <a class="topic-card" id="web-development" data-topic="web development html css javascript" href="lesson.html?topic=web"><span class="icon">&lt;/&gt;</span><h3>Web Development</h3><p>Move from semantic HTML to interactive frontends and dependable backends.</p><small>Start path →</small></a>
+    <a class="topic-card" id="ai-ml" data-topic="ai machine learning data science" href="lesson.html?topic=ai"><span class="icon">AI</span><h3>AI, ML & Data Science</h3><p>Understand data, models, experimentation, and the systems around modern AI.</p><small>Start path →</small></a>
+    <a class="topic-card" id="languages" data-topic="programming languages python java c" href="lesson.html?topic=languages"><span class="icon">Py</span><h3>Programming Languages</h3><p>Learn the ideas behind C, C++, Java, Python, JavaScript, and more.</p><small>Start path →</small></a>
+    <a class="topic-card" id="system-design" data-topic="system design architecture" href="lesson.html?topic=system-design"><span class="icon">SD</span><h3>System Design</h3><p>Practice architecture, scalability, APIs, storage, and distributed systems.</p><small>Start path →</small></a>
+    <a class="topic-card" id="devops" data-topic="devops cloud docker kubernetes" href="lesson.html?topic=devops"><span class="icon">CI</span><h3>DevOps & Cloud</h3><p>Ship with confidence using Linux, containers, CI/CD, and cloud infrastructure.</p><small>Start path →</small></a>
+    <a class="topic-card" id="cybersecurity" data-topic="cybersecurity security networks" href="lesson.html?topic=cybersecurity"><span class="icon">SC</span><h3>Cybersecurity</h3><p>Explore secure coding, privacy, networks, authentication, and defense.</p><small>Start path →</small></a>
+    <a class="topic-card" id="databases" data-topic="databases sql nosql" href="lesson.html?topic=databases"><span class="icon">DB</span><h3>Databases</h3><p>Design schemas and write better queries across SQL and NoSQL systems.</p><small>Start path →</small></a>
+    <a class="topic-card" id="competitive" data-topic="competitive programming contests" href="lesson.html?topic=competitive"><span class="icon">CP</span><h3>Competitive Programming</h3><p>Turn algorithms into speed, accuracy, and better contest strategy.</p><small>Start path →</small></a>
+    <a class="topic-card" id="interview" data-topic="interview preparation careers" href="lesson.html?topic=interview"><span class="icon">IN</span><h3>Interview Preparation</h3><p>Prepare for coding, system design, behavioral, and mock interview rounds.</p><small>Start path →</small></a>
+    <a class="topic-card" id="tools" data-topic="developer tools git testing" href="lesson.html?topic=tools"><span class="icon">GT</span><h3>Developer Tools</h3><p>Get productive with Git, testing, APIs, editors, and team workflows.</p><small>Start path →</small></a>
+    <a class="topic-card" id="mobile" data-topic="mobile android ios" href="lesson.html?topic=mobile"><span class="icon">MB</span><h3>Mobile Development</h3><p>Create useful Android, iOS, and cross-platform app experiences.</p><small>Start path →</small></a>
+  </div>
+  <section class="resources"><div class="section-title"><h2>Keep learning</h2><span>Free resources</span></div><div class="resource-grid"><a class="resource" href="https://www.youtube.com/results?search_query=data+structures+algorithms+tutorial" target="_blank" rel="noopener"><strong>Watch video lessons ↗</strong><span>Curated YouTube searches for coding tutorials.</span></a><a class="resource" href="https://github.com/EbookFoundation/free-programming-books" target="_blank" rel="noopener"><strong>Read free books ↗</strong><span>Open programming books and study guides.</span></a><a class="resource" href="https://html5up.net/" target="_blank" rel="noopener"><strong>Use project templates ↗</strong><span>Starter templates for real web projects.</span></a></div></section>
+</main>
+<footer>
+  <div class="footer-grid">
+    <div><h3>CodeHub</h3><p>Learn coding, practice your skills, and prepare for your next opportunity with a community built for curious developers.</p></div>
+    <div><h3>Learn</h3><ul><li>DSA Tutorials</li><li>Programming Languages</li><li>Web Development</li><li>Machine Learning</li></ul></div>
+    <div><h3>Practice</h3><ul><li>Practice Problems</li><li>Interview Preparation</li><li>Weekly Contests</li><li>Problem of the Day</li></ul></div>
+    <div><h3>Company</h3><ul><li>About CodeHub</li><li>Contact Us</li><li>Privacy Policy</li><li>Terms of Use</li></ul></div>
+  </div>
+  <div class="copyright">© 2026 CodeHub. All rights reserved.</div>
+</footer>
+<script src="app.js" defer></script>
+</body>
+</html>
